@@ -26,11 +26,10 @@ export const zoomConfig = {
     },
     {
       name: 'month',
-      scale_height: 50,
-      min_column_width: 120,
+      scale_height: 30,
+      min_column_width: 50,
       scales: [
         { unit: 'month', format: '%F, %Y' },
-        { unit: 'week', format: (date) => weeks[dayjs(date).day()] },
       ],
     },
     {

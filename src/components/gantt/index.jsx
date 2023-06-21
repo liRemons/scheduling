@@ -70,6 +70,9 @@ export default class Gantt extends Component {
           return obj.duration;
         }
       },
+      {
+        name: 'add',
+      }
     ];
     gantt.config.show_links = false;
     gantt.parse(tasks);
@@ -77,24 +80,35 @@ export default class Gantt extends Component {
       marker: true
     });
 
-    gantt.showLightbox = () => false
+    gantt.showLightbox = () => false;
     gantt.config.lightbox.sections = [
       { name: "description", height: 38, map_to: "text", type: "textarea", focus: true },
       { name: "time", type: "duration", map_to: "auto", time_format: ["%d", "%m", "%Y", "%H:%i"] }
     ];
 
-    gantt.attachEvent("onTaskClick", (id) => {
-      this.handleClickTask(id)
+    gantt.attachEvent("onTaskCreated", (task) => {
+      this.addTask();
+    });
+
+    gantt.attachEvent("onTaskClick", (id, e) => {
+      if (e.target.className.includes('gantt_add')) {
+        this.handleClickTask(id, 'addChild')
+      } else if (e.target.className.includes('gantt_task_content')) {
+        this.handleClickTask(id)
+      } else {
+        return true;
+      }
     });
   }
 
 
-  handleClickTask = (id) => {
+  handleClickTask = (id, type) => {
     const { end_date, start_date, text } = gantt.getTask(id);
     this.setState({
       detail: {
         text,
         id,
+        addType: type,
         date: [dayjs(start_date), dayjs(end_date)]
       },
       handleType: 'edit'
@@ -130,7 +144,16 @@ export default class Gantt extends Component {
       if (handleType === 'add') {
         gantt.addTask(obj);
       } else if (handleType === 'edit') {
-        gantt.updateTask(detail.id, obj);
+        if (detail.addType === 'addChild') {
+          gantt.addTask({
+            ...obj,
+            parent: detail.id,
+            id: uuid(),
+          });
+        } else {
+          gantt.updateTask(detail.id, obj);
+
+        }
       }
 
       this.onCancel()
@@ -163,16 +186,15 @@ export default class Gantt extends Component {
     return (
       <div className="main-content">
         <Segmented options={segmentedOptions} onChange={this.changeSegmented} />
-        <Button onClick={this.addTask}>新增一条</Button>
         <div id='gantt-here' style={{ width: '100%', height: '100%', padding: '0px', }}></div>
         <Modal
           destroyOnClose
           open={addOpen}
-          title={handleType === 'edd' ? '新增' : '修改'}
+          title={handleType === 'add' ? '新增' : '修改'}
           onOk={this.add}
           onCancel={this.onCancel}
         >
-          <Form initialValues={detail} ref={this.formRef}>
+          <Form initialValues={detail.addType === 'addChild' ? {} : detail} ref={this.formRef}>
             {
               addItems.map(item => <FormItem key={item.name} {...item} />)
             }
