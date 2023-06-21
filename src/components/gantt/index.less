@@ -1,21 +1,25 @@
-html,
-body,
-#container,
-#container div:only-child,
-.gantt-container {
+html, body {
+    background: #fff;
+    font-family: arial;
     height: 100%;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
 }
-
+.main-content {
+    height: 600px;
+    height: calc(100vh - 50px);
+}
 .gantt_container .gantt_grid_scale .gantt_grid_head_cell {
-    line-height: 90px;
+    // line-height: 90px;
 }
 
-.gantt_container .gantt_scale_cell {
-    padding-top: 4px;
-    line-height: 18px;
-}
+// .gantt_container .gantt_scale_cell {
+//     padding-top: 4px;
+//     line-height: 18px;
+// }
 
-.gantt_container .gantt_last_cell {
-    line-height: 40px;
-    padding-top: 0;
-}
+// .gantt_container .gantt_last_cell {
+//     line-height: 40px;
+//     padding-top: 0;
+// }

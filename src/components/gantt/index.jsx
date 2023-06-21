@@ -1,12 +1,20 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, createRef } from 'react';
 import { gantt } from 'dhtmlx-gantt';
-import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
+import { Form, Segmented, Button, Modal } from 'antd';
+import { FormItem } from 'remons-components';
+import { v4 as uuid } from 'uuid';
 import './index.less';
-import dayjs from 'dayjs'
+import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css';
+import dayjs from 'dayjs';
+import { segmentedOptions, dayFormat, zoomConfig } from './const';
+
 
 export default class Gantt extends Component {
+  formRef = createRef();
   state = {
-
+    addOpen: false,
+    detail: {},
+    handleType: 'add'
   }
 
   componentDidMount() {
@@ -14,17 +22,15 @@ export default class Gantt extends Component {
     gantt.config.date_format = "%Y-%m-%d %H:%i";
     const { tasks } = this.props;
     gantt.config.autoscroll = true;
-    gantt.init(this.ganttContainer);
+    gantt.init('gantt-here');
     gantt.config.xml_date = '%Y-%m-%d'; // 日期格式化的匹配格式
     gantt.config.scale_height = 90; // 日期栏的高度 
-    const dayFormat = function (date) {
-      const weeks = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-      return ` ${dayjs(date).format('MM-DD')} </br > ${weeks[dayjs(date).day()]}`;
-    };
+
     gantt.config.scales = [
       { unit: 'year', step: 1, format: '%Y' },
       { unit: 'day', step: 1, format: dayFormat }
     ];
+    gantt.ext.zoom.init(zoomConfig);
     gantt.config.fit_tasks = true;
     gantt.config.columns = [
       {
@@ -39,11 +45,20 @@ export default class Gantt extends Component {
       },
       {
         name: 'start_date',
-        label: '时间',
+        label: '开始时间',
         width: '*',
         align: 'center',
         template: function (obj) {
           return obj.start_date;
+        }
+      },
+      {
+        name: 'end_date',
+        label: '开始时间',
+        width: '*',
+        align: 'center',
+        template: function (obj) {
+          return obj.end_date;
         }
       },
       {
@@ -55,36 +70,115 @@ export default class Gantt extends Component {
           return obj.duration;
         }
       },
-      {
-        name: 'add',
-        label: '',
-        width: '*',
-        align: 'right',
-        template: function (obj) {
-          return obj.add;
-        }
-      },
     ];
     gantt.config.show_links = false;
     gantt.parse(tasks);
     gantt.plugins({
       marker: true
     });
+
+    gantt.showLightbox = () => false
+    gantt.config.lightbox.sections = [
+      { name: "description", height: 38, map_to: "text", type: "textarea", focus: true },
+      { name: "time", type: "duration", map_to: "auto", time_format: ["%d", "%m", "%Y", "%H:%i"] }
+    ];
+
+    gantt.attachEvent("onTaskClick", (id) => {
+      this.handleClickTask(id)
+    });
   }
 
-  handleClick = () => {
-    console.log(gantt.getTaskCount());
+
+  handleClickTask = (id) => {
+    const { end_date, start_date, text } = gantt.getTask(id);
+    this.setState({
+      detail: {
+        text,
+        id,
+        date: [dayjs(start_date), dayjs(end_date)]
+      },
+      handleType: 'edit'
+    }, () => {
+      this.setState({ addOpen: true })
+    })
+  }
+
+  // console.log(gantt.getTaskBy("progress", 0, { task: true, project: true, milestone: true }));
+
+  changeSegmented = (val) => {
+    gantt.ext.zoom.setLevel(val);
+  }
+
+  addTask = () => {
+    this.setState({
+      addOpen: true,
+      handleType: 'add'
+    })
+  }
+
+  add = async () => {
+    const { handleType, detail } = this.state;
+    try {
+      await this.formRef.current.validateFields();
+      const { text, date } = this.formRef.current.getFieldsValue();
+      const obj = {
+        text,
+        id: detail.id || uuid(),
+        start_date: new Date(date[0].startOf('date').format('YYYY-MM-DD HH:mm:ss')),
+        end_date: new Date(date[1].endOf('date').format('YYYY-MM-DD HH:mm:ss'))
+      };
+      if (handleType === 'add') {
+        gantt.addTask(obj);
+      } else if (handleType === 'edit') {
+        gantt.updateTask(detail.id, obj);
+      }
+
+      this.onCancel()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  onCancel = () => {
+    this.setState({ addOpen: false, detail: {} });
   }
 
   render() {
+    const addItems = [
+      {
+        label: '排期名称',
+        component: 'input',
+        name: 'text',
+        required: true
+      },
+      {
+        label: '日期范围',
+        component: 'rangePicker',
+        name: 'date',
+        required: true
+      }
+    ]
+    const { addOpen, detail, handleType } = this.state;
+
     return (
-      <Fragment>
-        <div
-          ref={(input) => { this.ganttContainer = input }}
-          style={{ width: '100%', height: '100%' }}
-        ></div>
-        <button onClick={this.handleClick}>1111</button>
-      </Fragment>
+      <div className="main-content">
+        <Segmented options={segmentedOptions} onChange={this.changeSegmented} />
+        <Button onClick={this.addTask}>新增一条</Button>
+        <div id='gantt-here' style={{ width: '100%', height: '100%', padding: '0px', }}></div>
+        <Modal
+          destroyOnClose
+          open={addOpen}
+          title={handleType === 'edd' ? '新增' : '修改'}
+          onOk={this.add}
+          onCancel={this.onCancel}
+        >
+          <Form initialValues={detail} ref={this.formRef}>
+            {
+              addItems.map(item => <FormItem key={item.name} {...item} />)
+            }
+          </Form>
+        </Modal>
+      </div>
     );
   }
 }

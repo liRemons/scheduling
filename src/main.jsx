@@ -1,6 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ConfigProvider } from 'antd';
 import App from './app';
-import 'antd/dist/reset.css'
+import 'dayjs/locale/zh-cn';
+import zhCN from 'antd/locale/zh_CN';
 import { BrowserRouter } from 'react-router-dom'
-ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('container'));
+ReactDOM.render(<BrowserRouter>
+  <ConfigProvider locale={zhCN}>
+    <App />
+  </ConfigProvider>
+</BrowserRouter>, document.getElementById('container'));

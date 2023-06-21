@@ -1,0 +1,45 @@
+import dayjs from 'dayjs';
+
+export const segmentedOptions = [
+  { label: '年', value: 'year' },
+  { label: '月', value: 'month' },
+  { label: '日', value: 'day' },
+];
+
+export const weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+
+export const dayFormat = (date) => {
+  return ` ${dayjs(date).format('MM-DD')} ${weeks[dayjs(date).day()]}`;
+};
+
+export const zoomConfig = {
+  levels: [
+    {
+      name: 'day',
+      scale_height: 50,
+      min_column_width: 80,
+      scales: [
+        { unit: 'year', step: 1, format: '%Y' },
+        { unit: 'day', step: 1, format: dayFormat },
+      ],
+    },
+    {
+      name: 'month',
+      scale_height: 50,
+      min_column_width: 120,
+      scales: [
+        { unit: 'month', format: '%F, %Y' },
+        { unit: 'week', format: (date) => weeks[dayjs(date).day()] },
+      ],
+    },
+    {
+      name: 'year',
+      scale_height: 50,
+      min_column_width: 30,
+      scales: [{ unit: 'year', step: 1, format: '%Y' }],
+    },
+  ],
+};
+
+
