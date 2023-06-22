@@ -38,8 +38,8 @@ export default class Gantt extends Component {
     gantt.config.columns = [
       {
         name: 'text',
-        label: '任务名称',
-        tree: false,
+        label: '计划名称',
+        tree: true,
         width: '*',
         align: 'left',
         template: function (obj) {
@@ -57,22 +57,22 @@ export default class Gantt extends Component {
       },
       {
         name: 'end_date',
-        label: '开始时间',
+        label: '结束时间',
         width: '*',
         align: 'center',
         template: function (obj) {
           return obj.end_date;
         }
       },
-      {
-        name: 'duration',
-        label: '日期区间',
-        width: '*',
-        align: 'right',
-        template: function (obj) {
-          return obj.duration;
-        }
-      },
+      // {
+      //   name: 'duration',
+      //   label: '日期区间',
+      //   width: '*',
+      //   align: 'right',
+      //   template: function (obj) {
+      //     return obj.duration;
+      //   }
+      // },
       {
         isShow: !isPreview,
         name: 'add',
