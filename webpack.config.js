@@ -114,6 +114,7 @@ const getConfig = ({
       allowedHosts: 'auto',
       open: true,
       hot: true,
+      historyApiFallback: true,
       client: {
         progress: true,
       },

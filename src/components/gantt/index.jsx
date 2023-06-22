@@ -18,9 +18,12 @@ export default class Gantt extends Component {
   }
 
   componentDidMount() {
+    const { isPreview, tasks } = this.props;
+    if(isPreview) {
+      gantt.config.readonly = isPreview;
+    }
     gantt.i18n.setLocale("cn");
     gantt.config.date_format = "%Y-%m-%d %H:%i";
-    const { tasks } = this.props;
     gantt.config.autoscroll = true;
     gantt.init('gantt-here');
     gantt.config.xml_date = '%Y-%m-%d'; // 日期格式化的匹配格式
@@ -71,9 +74,10 @@ export default class Gantt extends Component {
         }
       },
       {
+        isShow: !isPreview,
         name: 'add',
       }
-    ];
+    ].filter(item => item.isShow !== false);
     gantt.config.show_links = false;
     gantt.parse(tasks);
     gantt.plugins({
@@ -87,10 +91,14 @@ export default class Gantt extends Component {
     ];
 
     gantt.attachEvent("onTaskCreated", (task) => {
+      if (isPreview) {
+        return false
+      }
       this.addTask();
     });
 
     gantt.attachEvent("onTaskClick", (id, e) => {
+
       if (e.target.className.includes('gantt_add')) {
         this.handleClickTask(id, 'addChild')
       } else if (e.target.className.includes('gantt_task_content')) {
@@ -103,6 +111,11 @@ export default class Gantt extends Component {
 
 
   handleClickTask = (id, type) => {
+    const { isPreview } = this.props;
+    if (isPreview) {
+      return false;
+    };
+
     const { end_date, start_date, text } = gantt.getTask(id);
     this.setState({
       detail: {

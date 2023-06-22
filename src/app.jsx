@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Gantt from './components/gantt';
-import dayjs from 'dayjs'
+import Router from './router';
+import Layout from './components/layout';
 
 const data = {
   data: []
@@ -8,11 +9,10 @@ const data = {
 class App extends Component {
   render() {
     return (
-      <div>
-        <div className="gantt-container">
-          <Gantt tasks={data} />
-        </div>
-      </div>
+      <Layout>
+        <Router />
+        {/* <Gantt tasks={data} /> */}
+      </Layout>
     );
   }
 }
