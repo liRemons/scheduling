@@ -19,14 +19,22 @@ export default class Gantt extends Component {
 
   componentDidMount() {
     const { isPreview, tasks } = this.props;
-    if(isPreview) {
+    if (isPreview) {
       gantt.config.readonly = isPreview;
     }
+    gantt.plugins({
+      tooltip: true
+    });
+    gantt.templates.tooltip_text = function (start, end, task) {
+      return "<b>AO:</b> " + task.text + "<br/><b>开始时间:</b> " +
+        dayjs(start).format('YYYY-MM-DD HH:mm:ss') +
+        "<br/><b>结束时间:</b> " + dayjs(end).format('YYYY-MM-DD HH:mm:ss');
+    };
     gantt.i18n.setLocale("cn");
     gantt.config.date_format = "%Y-%m-%d %H:%i";
     gantt.config.autoscroll = true;
     gantt.init('gantt-here');
-    gantt.config.xml_date = '%Y-%m-%d'; // 日期格式化的匹配格式
+    gantt.config.xml_date = '%Y-%m-%d  %H:%i'; // 日期格式化的匹配格式
     gantt.config.scale_height = 90; // 日期栏的高度 
 
     gantt.config.scales = [
@@ -198,7 +206,7 @@ export default class Gantt extends Component {
 
     return (
       <div className="main-content">
-        <Segmented options={segmentedOptions} onChange={this.changeSegmented} />
+        <Segmented defaultValue={'day'} options={segmentedOptions} onChange={this.changeSegmented} />
         <div id='gantt-here' style={{ width: '100%', height: '100%', padding: '0px', }}></div>
         <Modal
           destroyOnClose

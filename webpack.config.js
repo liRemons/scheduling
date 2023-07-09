@@ -118,6 +118,9 @@ const getConfig = ({
       client: {
         progress: true,
       },
+      proxy: {
+        '/engineer': 'http://8.134.180.205:5000',
+      },
     },
     stats: 'normal',
     devtool: isEnvDevelopment ? 'eval-source-map' : false,

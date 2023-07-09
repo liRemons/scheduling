@@ -87,7 +87,7 @@ const rules = ({ isEnvDevelopment }) => [
         },
       },
       {
-        test: /\.js|jsx$/,
+        test: /(.js|.jsx)$/,
         include: path.resolve(__dirname, '../src'),
         use: [
           {
