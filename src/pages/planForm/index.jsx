@@ -3,7 +3,6 @@ import Gantt from '../../components/gantt';
 import { Steps, Button, Table, Spin, message, Segmented } from 'antd';
 import { ButtonBar, Form, FormItem } from 'remons-components';
 import style from './index.module.less';
-import MockData from './mock.json'
 import dayjs from 'dayjs'
 
 const App = () => {
