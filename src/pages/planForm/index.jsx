@@ -218,7 +218,7 @@ const App = () => {
 
     const Map = {
       list: renderList(gattData),
-      gantt: <Gantt isPreview tasks={{
+      gantt: <Gantt tasks={{
         data: tasks
       }} />
     }
