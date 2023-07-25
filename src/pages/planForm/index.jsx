@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Gantt from '../../components/gantt';
+import { useNavigate } from 'react-router';
 import { Steps, Button, Table, Spin, message, Segmented } from 'antd';
 import { ButtonBar, Form, FormItem } from 'remons-components';
 import style from './index.module.less';
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
+import services from '../../axios';
 
 const App = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [gattData, setGattData] = useState([]);
-  const [gattType, setGanttType] = useState('gantt')
+  const [gattType, setGanttType] = useState('gantt');
+  const [params, setParams] = useState({});
+  const ganttRef = useRef(null);
 
   const formLayout = {
     labelCol: {
@@ -22,18 +27,19 @@ const App = () => {
   };
 
   const getaAO = ({ reqParams, RECORDS }) => {
-    window.fetch('//8.134.180.205:5000/engineer/ao', {
+    services({
+      url: 'http://8.134.180.205:5000/engineer/ao',
       method: 'post',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
+      data: {
         ...reqParams,
         input_workstation_schedule_init: {
           RECORDS
         }
-      })
-    }).then(res => res.json())
+      }
+    })
       .then(res => {
         setLoading(false);
         setGattData(res.data)
@@ -53,20 +59,21 @@ const App = () => {
       "allow_fast_load": true,
       ...data
     }
-    window.fetch('//8.134.180.205:5000/engineer/workstation', {
+    services({
+      url: 'http://8.134.180.205:5000/engineer/workstation',
       method: 'post',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
+      data: {
         ...reqParams,
         "input_json_init": {
           "200": [{ "ZIBA开始": "2022-11-26", "ZIBB完成": "2023-02-24" }],
           "201": [{ "ZIBA开始": "2022-12-22", "ZIBB完成": "2023-03-20" }]
         },
         "k_num_fixture": 2
-      })
-    }).then(res => res.json())
+      }
+    })
       .then(res => {
         const RECORDS = res?.data.map((item, index) => {
           if (!Object.keys(item?.schedule)?.length) {
@@ -209,7 +216,7 @@ const App = () => {
 
     const tasks = gattData.map(item => {
       return {
-        id: item.ao_no,
+        id: `${item.ao_no}_${item.taskid}`,
         text: item.ao_name,
         start_date: item.start,
         end_date: item.end
@@ -218,7 +225,7 @@ const App = () => {
 
     const Map = {
       list: renderList(gattData),
-      gantt: <Gantt isPreview tasks={{
+      gantt: <Gantt ref={ganttRef} tasks={{
         data: tasks
       }} />
     }
@@ -262,12 +269,31 @@ const App = () => {
         ...values,
         start_time: values.start_time ? dayjs(values.start_time).format('YYYY-MM-DD HH:mm:ss') : ''
       };
+      setParams(params);
       getPlan(params);
       setStep(step + 1)
     } catch (error) {
       console.log(error);
     }
 
+  }
+
+  const onSubmit = async () => {
+    const res = await services({
+      url: 'http://remons.cn:8009/info/createScheduling',
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: {
+        params,
+        data: JSON.stringify(ganttRef.current.onSave())
+      }
+    });
+    if (res.code === 200 && res.success) {
+      message.success('保存成功');
+      navigate('/planList')
+    }
   }
 
   const container = <>
@@ -284,7 +310,7 @@ const App = () => {
     <ButtonBar isAffix={false}>
       {step !== 0 && <Button type="primary" onClick={prev}>上一步</Button>}
       {step !== stepItems.length - 1 && <Button type="primary" onClick={next}>下一步</Button>}
-      {step === stepItems.length - 1 && <Button type="primary">完成</Button>}
+      {step === stepItems.length - 1 && <Button type="primary" onClick={onSubmit}>完成</Button>}
       <Button>取消</Button>
     </ButtonBar>
   </>

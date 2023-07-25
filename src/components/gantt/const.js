@@ -26,15 +26,15 @@ export const zoomConfig = {
         { unit: 'day', step: 1, format: dayFormat },
       ],
     },
-    // {
-    //   name: 'hour',
-    //   scale_height: 50,
-    //   min_column_width: 80,
-    //   scales: [
-    //     { unit: 'day', step: 1, format: dayFormat },
-    //     { unit: 'hour', step: 1, format: "%H:%i" },
-    //   ],
-    // },
+    {
+      name: 'hour',
+      scale_height: 50,
+      min_column_width: 80,
+      scales: [
+        { unit: 'day', step: 1, format: dayFormat },
+        { unit: 'hour', step: 1, format: "%H:%i" },
+      ],
+    },
     {
       name: 'month',
       scale_height: 30,

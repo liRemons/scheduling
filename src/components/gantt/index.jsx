@@ -4,7 +4,7 @@ import { Form, Segmented, Button, Modal } from 'antd';
 import { FormItem } from 'remons-components';
 import { v4 as uuid } from 'uuid';
 import './index.less';
-import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css';
+import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_terrace.css';
 import dayjs from 'dayjs';
 import { segmentedOptions, dayFormat, zoomConfig } from './const';
 
@@ -81,10 +81,10 @@ export default class Gantt extends Component {
       //     return obj.duration;
       //   }
       // },
-      {
-        isShow: !isPreview,
-        name: 'add',
-      }
+      // {
+      //   isShow: !isPreview,
+      //   name: 'add',
+      // }
     ].filter(item => item.isShow !== false);
     gantt.config.show_links = false;
     gantt.parse(tasks);
@@ -115,6 +115,8 @@ export default class Gantt extends Component {
         return true;
       }
     });
+
+    window.gantt = gantt;
   }
 
 
@@ -138,8 +140,6 @@ export default class Gantt extends Component {
     })
   }
 
-  // console.log(gantt.getTaskBy("progress", 0, { task: true, project: true, milestone: true }));
-
   changeSegmented = (val) => {
     gantt.ext.zoom.setLevel(val);
   }
@@ -159,8 +159,8 @@ export default class Gantt extends Component {
       const obj = {
         text,
         id: detail.id || uuid(),
-        start_date: new Date(date[0].startOf('date').format('YYYY-MM-DD HH:mm:ss')),
-        end_date: new Date(date[1].endOf('date').format('YYYY-MM-DD HH:mm:ss'))
+        start_date: new Date(date[0].format('YYYY-MM-DD HH:mm:ss')),
+        end_date: new Date(date[1].format('YYYY-MM-DD HH:mm:ss'))
       };
       if (handleType === 'add') {
         gantt.addTask(obj);
@@ -173,7 +173,6 @@ export default class Gantt extends Component {
           });
         } else {
           gantt.updateTask(detail.id, obj);
-
         }
       }
 
@@ -185,6 +184,17 @@ export default class Gantt extends Component {
 
   onCancel = () => {
     this.setState({ addOpen: false, detail: {} });
+  }
+
+  onSave = () => {
+    const tasks = gantt.getDatastore('task').getItems();
+    const data = tasks.map(item => ({
+      ao_no: item.id,
+      ao_name: item.text,
+      start: dayjs(item.start_date).format('YYYY-MM-DD HH:mm:ss'),
+      end: dayjs(item.end_date).format('YYYY-MM-DD HH:mm:ss'),
+    }));
+    return data;
   }
 
   render() {
@@ -199,7 +209,10 @@ export default class Gantt extends Component {
         label: '日期范围',
         component: 'rangePicker',
         name: 'date',
-        required: true
+        required: true,
+        componentProps: {
+          showTime: true
+        }
       }
     ]
     const { addOpen, detail, handleType } = this.state;
