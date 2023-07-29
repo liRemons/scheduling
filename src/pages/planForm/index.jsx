@@ -279,21 +279,30 @@ const App = () => {
   }
 
   const onSubmit = async () => {
-    const res = await services({
-      url: 'http://remons.cn:8009/info/createScheduling',
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      data: {
-        params,
-        data: JSON.stringify(ganttRef.current.onSave())
+    try {
+      setLoading(true);
+      const res = await services({
+        url: 'http://8.134。180.205:8009/info/createScheduling',
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: {
+          params,
+          data: JSON.stringify(ganttRef.current.onSave())
+        }
+      });
+      if (res.code === 200 && res.success) {
+        message.success('保存成功');
+        setLoading(false);
+        navigate('/planList')
+      } else {
+        setLoading(false);
       }
-    });
-    if (res.code === 200 && res.success) {
-      message.success('保存成功');
-      navigate('/planList')
+    } catch (error) {
+      setLoading(false);
     }
+
   }
 
   const container = <>

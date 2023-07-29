@@ -25,7 +25,7 @@ const View = () => {
 
   const getList = async () => {
     const res = await services({
-      url: 'http://remons.cn:8009/info/queryMyInfo'
+      url: 'http://8.136.206.131:8009/info/queryMyInfo'
     });
     setDataSource(res.data)
   }
@@ -50,7 +50,7 @@ const View = () => {
   const openDetail = async (data) => {
     setOpen(true)
     const res = await services({
-      url: 'http://remons.cn:8009/info/queryMyInfoDetail',
+      url: 'http://8.136.206.131:8009/info/queryMyInfoDetail',
       method: 'get',
       params: {
         id: data.id
@@ -71,7 +71,7 @@ const View = () => {
 
   const del = async (data) => {
     const res = await services({
-      url: 'http://remons.cn:8009/info/deleteMyInfo',
+      url: 'http://8.136.206.131:8009/info/deleteMyInfo',
       method: 'delete',
       data: {
         id: data.id
