@@ -48,7 +48,7 @@ const View = () => {
   }
 
   const openDetail = async (data) => {
-    setOpen(true)
+    
     const res = await services({
       url: 'http://8.136.206.131:8009/info/queryMyInfoDetail',
       method: 'get',
@@ -66,6 +66,7 @@ const View = () => {
         }
       });
       setTasks(tasks);
+      setOpen(true)
     }
   }
 
