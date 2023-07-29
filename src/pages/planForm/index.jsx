@@ -282,7 +282,7 @@ const App = () => {
     try {
       setLoading(true);
       const res = await services({
-        url: 'http://8.134。180.205:8009/info/createScheduling',
+        url: 'http://8.134.180.205:8009/info/createScheduling',
         method: 'post',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
