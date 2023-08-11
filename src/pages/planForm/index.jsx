@@ -134,10 +134,7 @@ const App = () => {
         label: '年度生产飞机架数',
         name: 'target_plane_cnt',
         component: 'inputNumber',
-        required: true,
-        componentProps: {
-          disabled: true
-        }
+        required: true
       },
       {
         label: '产线条数',
