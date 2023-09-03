@@ -73,7 +73,7 @@ export default class UserList extends React.Component {
     Modal.confirm({
       title: '确认删除吗?', onOk: async () => {
         const res = await services({
-          url: '//127.0.0.1:8009/user/deleteUser',
+          url: 'http://8.134.180.205:8009/user/deleteUser',
           method: 'delete',
           data: {
             ids: [id]
