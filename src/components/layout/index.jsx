@@ -15,7 +15,7 @@ const App = ({ children }) => {
 
   useEffect(() => {
     if (location.pathname !== '/login') {
-      localStorage['REMONS_TOKEN'] ? '' : navigate(`/login`)
+      localStorage['REMONS_TOKEN'] ? '' : window.location.href = '/login'
     }
   }, []);
 
