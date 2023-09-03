@@ -3,14 +3,25 @@ import {
   MenuUnfoldOutlined
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import style from './index.module.less';
 
 const { Header, Sider, Content } = Layout;
 const App = ({ children }) => {
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== '/login') {
+      localStorage['REMONS_TOKEN'] ? '' : navigate(`/login`)
+    }
+  }, []);
+
+  if (location.pathname === '/login') {
+    return children;
+  }
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },

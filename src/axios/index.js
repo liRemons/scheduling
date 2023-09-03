@@ -9,6 +9,8 @@ const arr = [service];
 arr.forEach((item) => {
   item.interceptors.request.use(
     (config) => {
+      const REMONS_TOKEN = localStorage.getItem('REMONS_TOKEN');
+      REMONS_TOKEN && (config.headers['REMONS_TOKEN'] = REMONS_TOKEN);
       // 如果需要序列化
       if (
         config.headers['Content-Type'] === 'application/x-www-form-urlencoded'
@@ -27,8 +29,11 @@ arr.forEach((item) => {
   // response 拦截器,数据返回后进行一些处理
   item.interceptors.response.use(
     (response) => {
-      console.log({ response });
       const res = response.data || {};
+      if (res.code === 401) {
+        window.location.href = `/login`;
+        return;
+      }
       if (res.success || res.code === 200) {
         return res || {};
       }
