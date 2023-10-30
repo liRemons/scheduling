@@ -74,7 +74,7 @@ const App = ({ children }) => {
               height: 64,
             }}
           />
-          <Button onClick={() => {localStorage.removeItem('REMONS_TOKEN');window.location.href = 'login'}>退出登录</Button>
+          <Button onClick={() => {localStorage.removeItem('REMONS_TOKEN');window.location.href = 'login'}}>退出登录</Button>
         </Header>
         <Content
           className="site-layout"
