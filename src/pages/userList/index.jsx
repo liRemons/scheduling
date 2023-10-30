@@ -66,6 +66,8 @@ export default class UserList extends React.Component {
       message.success(res.msg);
       this.setState({ visible: false });
       this.getUserList()
+    } else {
+      message.error(res.msg);
     }
   }
 
