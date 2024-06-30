@@ -29,7 +29,7 @@ const View = () => {
     try {
       setLoading(true);
       const res = await services({
-        url: 'http://8.134.180.205:8009/info/queryMyInfo'
+        url: 'http://101.201.102.33:8009/info/queryMyInfo'
       });
       setLoading(false);
       setDataSource(res.data)
@@ -60,7 +60,7 @@ const View = () => {
     try {
       setLoading(true);
       const res = await services({
-        url: 'http://8.134.180.205:8009/info/queryMyInfoDetail',
+        url: 'http://101.201.102.33:8009/info/queryMyInfoDetail',
         method: 'get',
         params: {
           id: data.id
@@ -88,7 +88,7 @@ const View = () => {
 
   const del = async (data) => {
     const res = await services({
-      url: 'http://8.134.180.205:8009/info/deleteMyInfo',
+      url: 'http://101.201.102.33:8009/info/deleteMyInfo',
       method: 'delete',
       data: {
         id: data.id

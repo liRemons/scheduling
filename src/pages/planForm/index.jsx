@@ -28,7 +28,7 @@ const App = () => {
 
   const getaAO = ({ reqParams, RECORDS }) => {
     services({
-      url: 'http://8.134.180.205:5000/engineer/ao',
+      url: 'http://101.201.102.33:5000/engineer/ao',
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const App = () => {
       ...data
     }
     services({
-      url: 'http://8.134.180.205:5000/engineer/workstation',
+      url: 'http://101.201.102.33:5000/engineer/workstation',
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -279,7 +279,7 @@ const App = () => {
     try {
       setLoading(true);
       const res = await services({
-        url: 'http://8.134.180.205:8009/info/createScheduling',
+        url: 'http://101.201.102.33:8009/info/createScheduling',
         method: 'post',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

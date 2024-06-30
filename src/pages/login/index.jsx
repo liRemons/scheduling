@@ -9,7 +9,7 @@ import { DES_IV, DES_KEY, encrypt } from '../../crypto';
 class Login extends React.Component {
   onFinish = async (values) => {
     const { pwd, account } = values;
-    const res = await service.post('http://8.134.180.205:8009/user/login', {
+    const res = await service.post('http://101.201.102.33:8009/user/login', {
       account,
       password: encrypt({ DES_IV, DES_KEY, MSG: pwd })
     });

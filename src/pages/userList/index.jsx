@@ -15,7 +15,7 @@ export default class UserList extends React.Component {
   }
 
   getUserList = async () => {
-    const res = await services.get('http://8.134.180.205:8009/user/queryUser');
+    const res = await services.get('http://101.201.102.33:8009/user/queryUser');
     this.setState({ dataSource: res.data || [] })
   }
 
@@ -41,9 +41,9 @@ export default class UserList extends React.Component {
     }
     const { pwd, account } = values;
     const urlMap = {
-      add: 'http://8.134.180.205:8009/user/addUser',
-      edit: 'http://8.134.180.205:8009/user/updateUser',
-      editPwd: 'http://8.134.180.205:8009/user/updateUser'
+      add: 'http://101.201.102.33:8009/user/addUser',
+      edit: 'http://101.201.102.33:8009/user/updateUser',
+      editPwd: 'http://101.201.102.33:8009/user/updateUser'
     }
 
     const methodMap = {
@@ -75,7 +75,7 @@ export default class UserList extends React.Component {
     Modal.confirm({
       title: '确认删除吗?', onOk: async () => {
         const res = await services({
-          url: 'http://8.134.180.205:8009/user/deleteUser',
+          url: 'http://101.201.102.33:8009/user/deleteUser',
           method: 'delete',
           data: {
             ids: [id]
